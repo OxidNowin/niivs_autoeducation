@@ -1,0 +1,25 @@
+{% load static %}
+<aside class="aside-table">
+  <ul class="aside-table__list">
+    <li class="aside-table__item">
+      <a href="{% url 'usercard_list' %}" class="aside-table__item-link">
+        Список сотрудников
+      </a>
+    </li>
+    <li class="aside-table__item">
+      <a href="{% url 'feducation_view' %}" class="aside-table__item-link">
+        Первичное обучение
+      </a>
+    </li>
+    <li class="aside-table__item">
+      <a href="{% url 'peducation_view' %}" class="aside-table__item-link">
+        Периодическое обучение
+      </a>
+    </li>
+    <li class="aside-table__item">
+      <a href="{% url 'poll_list' %}" class="aside-table__item-link">
+        Тесты
+      </a>
+    </li>
+  </ul>
+</aside>

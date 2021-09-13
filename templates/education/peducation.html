@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Периодическое обучение{% endblock %}
+{% load static %}
+{% block content %}
+
+  {% if messages %}
+    {% for message in messages %}
+      {{ message }} 
+    {% endfor %}
+  {% endif %}
+
+	<form action="{% url 'pfilter' %}" method="GET">
+		<ul>
+		{% for s in sub %}
+		<li>
+		  <input type="checkbox" name="subdivision_name" value="{{ s.id }}">
+		  <span>{{ s.subdivision_name }}</span>
+		</li>
+		{% endfor %}
+		</ul>
+		<button type="submit">Найти</button>
+	</form>
+	{% for e in model %}
+	<p>
+		<a href="{% url 'peducation_detail_view' e.id %}">{{ e.user_name }}</a>
+		{{ e.test_issueng_date }}
+		{{ e.completion_date }}
+		{{ e.percent_of_complete }}
+	</p>
+	{% endfor %}
+	<form method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<button class="" type="submit">Добавить</button>
+	</form>
+{% endblock %}

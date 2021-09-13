@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Тест{% endblock %}
+{% block content %}
+  
+  {% if messages %}
+    {% for message in messages %}
+      {{ message }} 
+    {% endfor %}
+  {% endif %}
+
+  <h3>Название теста {{ poll_model.poll_name }}</h3>
+  <form method="POST">
+    {% csrf_token %}
+    <input type="text" name="delete_poll" hidden="hidden" value="{{ poll_model.id }}">
+    <button>Удалить тест</button>    
+  </form>
+
+  {% for qm in question_model %}
+    <h4>Вопрос {{ qm.text_question }}</h4>
+    <form method="POST">
+      {% csrf_token %}
+      <input type="text" name="delete_question" hidden="hidden" value="{{ qm.id }}">
+      <button>Удалить</button>    
+    </form>
+    {% for am in answer_model %}
+      {% if qm.id == am.question_id %}
+        <h5>Ответ: {{ am.text_answer }} Правильно: {{ am.is_right }}</h5>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+{% endblock %}

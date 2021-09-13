@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Карточка сотрудника{% endblock %}
+{% load static %}
+{% block content %}
+
+{% if message %}
+	{{ message }}
+{% else %}
+	<p>
+		{{ model.name }}
+		{{ model.subdivision }}
+		{{ model.education }}
+		{{ model.education_profile }}
+		{{ model.receipt }}
+		<form method="POST">
+			{% csrf_token %}
+			<input type="text" name="delete_user" hidden="hidden" value="{{ model.id }}">
+			<button>Удалить</button>    
+		</form>
+	</p>
+{% endif %}
+
+{% endblock %}

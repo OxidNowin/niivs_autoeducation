@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Список сотрудников{% endblock %}
+{% load static %}
+{% block content %}
+    {% if messages %}
+      {% for message in messages %}
+        {{ message }} 
+      {% endfor %}
+    {% endif %}
+  <section class="table">
+    <form method="POST" class="table__search-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="table__button-wrapper">
+      <button type="submit" class="table__add-button common-button">Добавить</button>
+    </div>
+    </form>
+    <div class="table__wrapper">
+      <div class="table__search">
+        <input type="text" class="table__search-input" placeholder="Поиск" required>
+        <span class="table__search-button">
+          <svg class="table__search-button-svg" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+            viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;" xml:space="preserve">
+          <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23
+            s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92
+            c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17
+            s-17-7.626-17-17S14.61,6,23.984,6z"/>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          <g>
+          </g>
+          </svg>
+        </span>
+      </div>
+      <form action="{% url 'ufilter' %}" method="GET">
+        <ul>
+          {% for s in sub %}
+            <li>
+              <input type="checkbox" name="subdivision_name" value="{{ s.id }}">
+              <span>{{ s.subdivision_name }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+        <div class="table__button-wrapper">
+          <button type="submit" class="common-button table__search-button">Найти</button>
+        </div>
+      </form>
+    </div>
+    <table>
+      <tr>
+        <th>ФИО сотрудника</th>
+        <th>Подразделение</th>
+        <th>Образование</th>
+        <th>Профиль образования</th>
+        <th>Дата приёма</th>
+      </tr>
+        {% for user in model %}
+      <tr>
+        <td><a href="{{ user.get_absolute_url }}">{{ user.name }}</a></td>
+        <td>{{ user.subdivision }}</td>
+        <td>{{ user.education }}</td>
+        <td>{{ user.education_profile }}</td>
+        <td>{{ user.receipt }}</td>
+       </tr>
+      <tr>
+        {% endfor %}
+    </table>
+  </section>  
+
+{% endblock %}

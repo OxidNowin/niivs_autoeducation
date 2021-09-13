@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Периодическое обучение{% endblock %}
+{% load static %}
+{% block content %}
+<p>
+		{{ model.user_name }}
+		{{ model.test_issueng_date }}
+		{{ model.completion_date }}
+		{{ model.percent_of_complete }}
+		{% if model.pe_file.url is not "Null" %}
+			<a href="{{ model.pe_file.url }}" class="typical__button prof__download-button" download>Скачать</a>
+		{% endif %}
+	<form method="POST">
+		{% csrf_token %}
+		<input type="text" name="delete_pe" hidden="hidden" value="{{ model.id }}">
+		<button>Удалить</button>    
+	</form>
+</p>
+{% endblock %}
