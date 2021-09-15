@@ -59,14 +59,12 @@
         </span>
       </div>
       <form action="{% url 'ufilter' %}" method="GET">
-        <ul>
+        <select name="subdivision_name" required="True">
+          <option value="">--------</option>
           {% for s in sub %}
-            <li>
-              <input type="checkbox" name="subdivision_name" value="{{ s.id }}">
-              <span>{{ s.subdivision_name }}</span>
-            </li>
+            <option value="{{ s.id }}">{{ s.subdivision_name }}</option>
           {% endfor %}
-        </ul>
+        </select>
         <div class="table__button-wrapper">
           <button type="submit" class="common-button table__search-button">Найти</button>
         </div>

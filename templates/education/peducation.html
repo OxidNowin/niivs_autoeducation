@@ -10,14 +10,12 @@
   {% endif %}
 
 	<form action="{% url 'pfilter' %}" method="GET">
-		<ul>
-		{% for s in sub %}
-		<li>
-		  <input type="checkbox" name="subdivision_name" value="{{ s.id }}">
-		  <span>{{ s.subdivision_name }}</span>
-		</li>
-		{% endfor %}
-		</ul>
+    <select name="subdivision_name" required="True">
+      <option value="">--------</option>
+      {% for s in sub %}
+        <option value="{{ s.id }}">{{ s.subdivision_name }}</option>
+      {% endfor %}
+    </select>
 		<button type="submit">Найти</button>
 	</form>
 	{% for e in model %}

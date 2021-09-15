@@ -64,14 +64,12 @@
 	      </span>
 	    </div>
 		<form action="{% url 'ffilter' %}" method="GET">
-			<ul>
-			{% for s in sub %}
-			<li>
-			  <input type="checkbox" name="subdivision_name" value="{{ s.id }}">
-			  <span>{{ s.subdivision_name }}</span>
-			</li>
-			{% endfor %}
-			</ul>
+      <select name="subdivision_name" required="True">
+        <option value="">--------</option>
+        {% for s in sub %}
+          <option value="{{ s.id }}">{{ s.subdivision_name }}</option>
+        {% endfor %}
+      </select>
 			<div class="table__button-wrapper">
 				<button class="common-button table__search-button" type="submit">Найти</button>
 			</div>
