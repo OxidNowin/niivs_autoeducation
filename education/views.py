@@ -13,6 +13,7 @@ import xlsxwriter
 
 class SubdivisionName:
     """Вывод queryset подразделения"""
+
     def get_subdivisions(self):
         return Subdivision.objects.all()
 
@@ -106,6 +107,94 @@ class FEducationView(SubdivisionName, View):
         return redirect('feducation_view')
 
 
+    def get_fedu_xl(self):
+        """Формирование экселя по первичному обучению"""
+        
+        fedu_dict = list(FirstEducation.objects.values())
+        fedu_arr = []
+        for dictionary in fedu_dict:
+            fedu_arr.append([])
+            u = UserCard.objects.get(id=dictionary['user_name_id'])
+            fedu_arr[-1].append(u.name)
+            fedu_arr[-1].append(u.subdivision.subdivision_name)
+            fedu_arr[-1].append(u.receipt)
+            fedu_arr[-1].append(dictionary['date'])
+
+            if dictionary['estimate'] is True:
+                estimate = "Сдал"
+            else:
+                estimate = "Не сдал"
+            fedu_arr[-1].append(estimate)
+
+            if not dictionary['fe_file']:
+                has_file = "Нет"
+            else:
+                has_file = "Есть"
+            fedu_arr[-1].append(has_file)
+
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="Otchet_o_pervichnom_obuchenii.xlsx"'
+        workbook = xlsxwriter.Workbook(response, {'in_memory': True})
+        worksheet = workbook.add_worksheet('Список сотрудников')
+        worksheet.set_column('B:B', 30)
+        worksheet.set_column('C:C', 20)
+        worksheet.set_column('D:D', 10)
+        worksheet.set_column('E:E', 25)
+        worksheet.set_column('F:F', 25)
+        worksheet.set_column('G:G', 30)
+        worksheet.set_row(0, 50)
+
+        """Заголовки"""
+        header_cells_format = workbook.add_format({
+            'bold': True,
+            'text_wrap': True,
+            'align': 'vcenter',
+            'valign': 'center',
+            'border': 1,
+            'color': '#000000',
+            'fg_color': 'D0D0D0',
+            'font_name': 'TimesNewRoman',
+            'font_size': 16,
+        })
+
+        header_titles = [
+            "№ п/п",
+            "ФИО",
+            "Подразделение",
+            "Дата приема",
+            "Дата сдачи первичного плана",
+            "Отметка о сдаче первичного обучения",
+            "Подтверждение о сдаче первичного обучения"
+        ]
+
+        value_cells_format = workbook.add_format({
+            'border': 1,
+            'font_name': 'TimesNewRoman',
+            'font_size': 14,
+        })
+
+        date_format = workbook.add_format({
+            'border': 1,
+            'font_name': 'TimesNewRoman',
+            'font_size': 14,
+            'num_format': 'dd.mm.yyyy'
+        })
+
+        for col_num, data in enumerate(header_titles):
+            worksheet.write(0, col_num, data, header_cells_format)
+
+        for row_num, row_data in enumerate(fedu_arr):
+            worksheet.write(row_num + 1, 0, row_num + 1, value_cells_format)
+            for col_num, col_data in enumerate(row_data):
+                if col_num == 3 or col_num == 2:
+                    worksheet.write(row_num + 1, col_num + 1, col_data, date_format)
+                else:
+                    worksheet.write(row_num + 1, col_num + 1, col_data, value_cells_format)
+
+        workbook.close()
+        return response
+
+
 class FilterFEducationView(SubdivisionName, View):
     """Фильтр по подразделениям"""
 
@@ -128,6 +217,7 @@ class FEducationDetailView(View):
     def get(self, request, pk):
         model = FirstEducation.objects.get(id=pk)
         #a_model = Answer.objects.filter(question_id__poll_id=model.test.id)
+        #Инфа о сданном тесте
         context = {
             'model': model,
             #'a_model': a_model,
@@ -211,90 +301,3 @@ class FilterPEducationView(SubdivisionName, View):
         }
         return render(request, "education/peducation.html", context)
 
-
-class FEducation_XL(View):
-
-    def get_fedu_xl(self, request):
-        """Формирование экселя по первичному обучению"""
-        fedu_dict = list(FirstEducation.objects.values())
-        fedu_arr = []
-        for dictionary in fedu_dict:
-            fedu_arr.append([])
-            u = UserCard.objects.get(id=dictionary['user_name_id'])
-            fedu_arr[-1].append(u.name)
-            fedu_arr[-1].append(u.subdivision.subdivision_name)
-            fedu_arr[-1].append(u.receipt)
-            fedu_arr[-1].append(dictionary['date'])
-
-            if dictionary['estimate'] is True:
-                estimate = "Сдал"
-            else:
-                estimate = "Не сдал"
-            fedu_arr[-1].append(estimate)
-
-            if not dictionary['fe_file']:
-                has_file = "Нет"
-            else:
-                has_file = "Есть"
-            fedu_arr[-1].append(has_file)
-
-        response = HttpResponse(content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="Otchet_o_pervichnom_obuchenii.xlsx"'
-        workbook = xlsxwriter.Workbook(response, {'in_memory': True})
-        worksheet = workbook.add_worksheet('Список сотрудников')
-        worksheet.set_column('B:B', 30)
-        worksheet.set_column('C:C', 20)
-        worksheet.set_column('D:D', 10)
-        worksheet.set_column('E:E', 25)
-        worksheet.set_column('F:F', 25)
-        worksheet.set_column('G:G', 30)
-        worksheet.set_row(0, 50)
-
-        """Заголовки"""
-        header_cells_format = workbook.add_format({
-            'bold': True,
-            'text_wrap': True,
-            'align': 'vcenter',
-            'valign': 'center',
-            'border': 1,
-            'color': '#000000',
-            'fg_color': 'D0D0D0',
-            'font_name': 'TimesNewRoman',
-            'font_size': 16,
-        })
-
-        header_titles = [
-            "№ п/п",
-            "ФИО",
-            "Подразделение",
-            "Дата приема",
-            "Дата сдачи первичного плана",
-            "Отметка о сдаче первичного обучения",
-            "Подтверждение о сдаче первичного обучения"
-        ]
-
-        value_cells_format = workbook.add_format({
-            'border': 1,
-            'font_name': 'TimesNewRoman',
-            'font_size': 14,
-        })
-
-        date_format = workbook.add_format({
-            'border': 1,
-            'font_name': 'TimesNewRoman',
-            'font_size': 14,
-            'num_format': 'dd.mm.yyyy'})
-
-        for col_num, data in enumerate(header_titles):
-            worksheet.write(0, col_num, data, header_cells_format)
-
-        for row_num, row_data in enumerate(fedu_arr):
-            worksheet.write(row_num + 1, 0, row_num + 1, value_cells_format)
-            for col_num, col_data in enumerate(row_data):
-                if col_num == 3 or col_num == 2:
-                    worksheet.write(row_num + 1, col_num + 1, col_data, date_format)
-                else:
-                    worksheet.write(row_num + 1, col_num + 1, col_data, value_cells_format)
-
-        workbook.close()
-        return response
