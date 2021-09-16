@@ -50,7 +50,7 @@ class UserDetailView(View):
             model = UserCard.objects.get(id=pk)
             context.update({'model': model})
         except:
-            context.update({'message': 'Сотрудник был удален'})
+            messages.error(request, 'Сотрудник не найден')
         return render(request, "education/usercard_detail.html", context)
 
     def post(self, request, pk, slug):
@@ -110,11 +110,13 @@ class FEducationView(SubdivisionName, View):
     def get_fedu_xl(self):
         """Формирование экселя по первичному обучению"""
         
+        """Формирование словаря из бд"""
+        users_data = UserCard.objects.all()
         fedu_dict = list(FirstEducation.objects.values())
         fedu_arr = []
         for dictionary in fedu_dict:
             fedu_arr.append([])
-            u = UserCard.objects.get(id=dictionary['user_name_id'])
+            u = users_data[dictionary['user_name_id']]
             fedu_arr[-1].append(u.name)
             fedu_arr[-1].append(u.subdivision.subdivision_name)
             fedu_arr[-1].append(u.receipt)
@@ -132,6 +134,7 @@ class FEducationView(SubdivisionName, View):
                 has_file = "Есть"
             fedu_arr[-1].append(has_file)
 
+        """Создание эксель-респонса"""
         response = HttpResponse(content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="Otchet_o_pervichnom_obuchenii.xlsx"'
         workbook = xlsxwriter.Workbook(response, {'in_memory': True})
@@ -215,13 +218,17 @@ class FEducationDetailView(View):
     """Первичное обучение сотрудника"""
 
     def get(self, request, pk):
-        model = FirstEducation.objects.get(id=pk)
-        #a_model = Answer.objects.filter(question_id__poll_id=model.test.id)
-        #Инфа о сданном тесте
-        context = {
-            'model': model,
-            #'a_model': a_model,
-        }
+        context = {}
+        try:
+            model = FirstEducation.objects.get(id=pk)
+            #a_model = Answer.objects.filter(question_id__poll_id=model.test.id)
+            #Инфа о сданном тесте
+            context.update({
+                'model': model,
+                #'a_model': a_model,
+            })
+        except:
+            messages.error(request, 'Первичное обучение не найдено')
         return render(request, "education/feducation_detail.html", context)
 
     """Удаление записи первичного обучения"""
@@ -269,8 +276,13 @@ class PEducationDetailView(View):
     """Периодическое обучение сотрудника"""
 
     def get(self, request, pk):
-        model = PeriodEducation.objects.get(id=pk)
-        return render(request, "education/peducation_detail.html", {"model": model})
+        context = {}
+        try:
+            model = PeriodEducation.objects.get(id=pk)
+            context.update({'model':model})
+        except:
+            messages.error(request, 'Периодическое обуение не найдено')
+        return render(request, "education/peducation_detail.html", context)
 
     """Удаление записи периодического обучения"""
 
