@@ -20,6 +20,7 @@ INSTALLED_APPS = [
 
     'education',
     'quiz',
+    #'account',
 ]
 
 MIDDLEWARE = [

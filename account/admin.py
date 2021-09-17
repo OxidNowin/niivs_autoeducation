@@ -34,7 +34,7 @@ class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
 
     class Meta:
-        model = MyUser
+        model = User
         fields = ('email', 'password', 'is_active', 'is_admin')
 
     def clean_password(self):
@@ -44,7 +44,7 @@ class UserChangeForm(forms.ModelForm):
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ('email', 'last_name', 'first_name', 'company_name', 'phone', 'is_admin', 'number_of_ratings')
+    list_display = ('email', 'last_name', 'first_name', 'is_admin', )
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
