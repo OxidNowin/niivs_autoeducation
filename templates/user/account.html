@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Список сотрудников{% endblock %}
+{% load static %}
+{% block content %}
+  
+  <section class="table">
+    {% if messages %}
+      {% for message in messages %}
+        {{ message }} 
+      {% endfor %}
+    {% endif %}
+
+  </section>  
+
+{% endblock %}

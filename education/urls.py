@@ -14,4 +14,5 @@ urlpatterns = [
 	path('get_fedu_xl/', views.FEducationView.get_fedu_xl, name="get_fedu_xl"),
 	path('peducation/', views.PEducationView.as_view(), name="peducation_view"),
 	path('peducation/<int:pk>', views.PEducationDetailView.as_view(), name="peducation_detail_view"),
+	path('account/', views.AccountView.as_view(), name="account_view"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

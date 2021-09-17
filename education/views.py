@@ -313,3 +313,7 @@ class FilterPEducationView(SubdivisionName, View):
         }
         return render(request, "education/peducation.html", context)
 
+class AccountView(View):
+
+    def get(self, request):
+        return render(request, 'user/account.html')
