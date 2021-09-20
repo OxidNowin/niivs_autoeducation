@@ -5,6 +5,7 @@ from django.contrib import messages
 from account.admin import UserCreationForm
 
 from .models import User, Subdivision
+from .admin import UserChangeForm
 
 
 class SubdivisionName:
@@ -43,22 +44,33 @@ class UserDetailView(View):
     def get(self, request, pk, slug):
         context = {}
         try:
-            model = User.objects.get(id=pk)
-            context.update({'model': model})
+            user = User.objects.get(id=pk)
+            form = UserChangeForm(initial={
+                'email': user.email,
+                'name': user.name,
+                'subdivision': user.subdivision,
+                'education': user.education,
+                'education_profile': user.education_profile,
+                'receipt': user.receipt,
+                })
+            context.update({
+                'form': form,
+                })
         except:
             messages.error(request, 'Сотрудник не найден')
         return render(request, "account/usercard_detail.html", context)
 
     def post(self, request, pk, slug):
-        try:
-            user_id = list(request.POST.values())[1]
-            employee_name = User.objects.get(id=user_id).name 
-            User.objects.get(id=user_id).delete()
-        except User.DoesNotExist:
-            messages.error(request, 'Что-то пошло не так..')
-        else:
-            messages.success(request, f'Сотрудник {employee_name} удален')
-        return redirect('user_list')
+        if 'delete_user' in request.POST:
+            try:
+                user = User.objects.get(id=pk)
+                user.delete()
+            except User.DoesNotExist:
+                messages.error(request, 'Что-то пошло не так..')
+                return redirect('user_detail', pk=pk, slug=slug)
+            else:
+                messages.success(request, f'Сотрудник {user.name} удален')
+            return redirect('user_list')
 
 
 class FilterUserView(SubdivisionName, View):

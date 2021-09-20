@@ -3,21 +3,17 @@
 {% load static %}
 {% block content %}
 
-{% if message %}
-	{{ message }}
-{% else %}
-	<p>
-		{{ model.name }}
-		{{ model.subdivision }}
-		{{ model.education }}
-		{{ model.education_profile }}
-		{{ model.receipt }}
-		<form method="POST">
-			{% csrf_token %}
-			<input type="text" name="delete_user" hidden="hidden" value="{{ model.id }}">
-			<button>Удалить</button>    
-		</form>
-	</p>
-{% endif %}
+    {% if messages %}
+      {% for message in messages %}
+        {{ message }} 
+      {% endfor %}
+    {% endif %}
+
+	{{ form.as_p }}
+	<form method="POST">
+		{% csrf_token %}
+		<input type="text" name="delete_user" hidden="hidden">
+		<button>Удалить</button>    
+	</form>
 
 {% endblock %}

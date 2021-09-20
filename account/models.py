@@ -35,6 +35,8 @@ class User(AbstractBaseUser):
         verbose_name='E-mail',
         max_length=255,
         unique=True,
+        blank=True,
+        null=True,
     )
 
     name = models.CharField(
@@ -61,16 +63,8 @@ class User(AbstractBaseUser):
         editable=False
     )
 
-    def get_absolute_url(self):
-        kwargs = {
-            'pk': self.id,
-            'slug': self.slug
-        }
-        return reverse('user_detail', kwargs=kwargs)
-
-
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField('Активный пользователь', default=True)
+    is_admin = models.BooleanField('Администратор', default=False)
 
     objects = UserManager()
 
@@ -78,7 +72,7 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.name + self.subdivision.subdivision_name
+        return self.name
 
     def has_perm(self, perm, obj=None):
         return True
@@ -86,19 +80,25 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
+    def get_absolute_url(self):
+        kwargs = {
+            'pk': self.id,
+            'slug': self.slug
+        }
+        return reverse('user_detail', kwargs=kwargs)
+
     @property
     def is_staff(self):
         return self.is_admin
 
     def save(self, *args, **kwargs):
-        self.first_letter = self.email[0]
         self.slug = slugify(self.name, allow_unicode=True)
         super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ["name"]
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
+        ordering = ['subdivision', 'name']
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
 
 class Subdivision(models.Model):
