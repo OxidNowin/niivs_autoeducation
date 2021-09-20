@@ -1,12 +1,13 @@
 from django import forms
 from .models import *
+from account.models import User
 
 
 class MyDateInput(forms.DateInput):
 	input_type = 'date'
 	format = r'%Y-%m-%d'
 
-
+"""
 class UserCardForm(forms.ModelForm):
 
 	name = forms.CharField(
@@ -30,9 +31,9 @@ class UserCardForm(forms.ModelForm):
 		widget=MyDateInput({'class': 'form-control'}))
 
 	class Meta:
-		model = UserCard
+		model = User
 		fields = ('name', 'subdivision', 'education', 'education_profile', 'receipt')
-
+"""
 
 class FirstEducationForm(forms.ModelForm):
 	class Meta:

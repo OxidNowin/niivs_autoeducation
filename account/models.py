@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from django.urls import reverse
+from django.utils.text import slugify
 
 
 class UserManager(BaseUserManager):
@@ -35,19 +37,37 @@ class User(AbstractBaseUser):
         unique=True,
     )
 
-    first_name = models.CharField(
-	    'Фамилия',
-	    max_length=15,
-	    null=True,
-	    blank=True
+    name = models.CharField(
+	    'ФИО пользователя',
+	    max_length=250,
     )
 
-    last_name = models.CharField(
-	    'Имя',
-	    max_length=15,
-	    null=True,
-	    blank=True
+    subdivision = models.ForeignKey(
+        'Subdivision',
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='Подразделение'
     )
+
+    education = models.TextField('Образование')
+
+    education_profile = models.CharField('Профиль образования', max_length=80)
+
+    receipt = models.DateField('Дата приема')
+
+    slug = models.SlugField(
+        max_length=75,
+        blank=True,
+        editable=False
+    )
+
+    def get_absolute_url(self):
+        kwargs = {
+            'pk': self.id,
+            'slug': self.slug
+        }
+        return reverse('user_detail', kwargs=kwargs)
+
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -58,7 +78,7 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.email
+        return self.name + self.subdivision.subdivision_name
 
     def has_perm(self, perm, obj=None):
         return True
@@ -72,4 +92,28 @@ class User(AbstractBaseUser):
 
     def save(self, *args, **kwargs):
         self.first_letter = self.email[0]
-        super().save()
+        self.slug = slugify(self.name, allow_unicode=True)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+
+class Subdivision(models.Model):
+    """Подразделение"""
+
+    subdivision_name = models.CharField(
+        "Аббревиатура подразделения",
+        max_length=20,
+        unique=True
+    )
+
+    def __str__(self):
+        return self.subdivision_name
+
+    class Meta:
+        ordering = ["subdivision_name"]
+        verbose_name = "Подразделение"
+        verbose_name_plural = "Подразделения"

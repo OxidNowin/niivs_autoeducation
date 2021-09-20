@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from account.models import User
+from .models import User, Subdivision
 
 
 class UserCreationForm(forms.ModelForm):
@@ -13,7 +13,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('email','last_name', 'first_name', )
+        fields = ('email', 'name', 'subdivision', 'education', 'education_profile', 'receipt')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -44,21 +44,35 @@ class UserChangeForm(forms.ModelForm):
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ('email', 'last_name', 'first_name', 'is_admin', )
+    list_display = ('email', 'name', 'subdivision', 'is_admin', 'education', 'education_profile', 'receipt')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Персональная информация', {'fields': (
-        								'first_name',
-                                        'last_name',
-        )}),
+        ('Информация об аккаунте', {'fields': ('email', 'password')}),
+        ('Персональная информация', {
+            'fields': (
+						'name', 
+                        'subdivision', 
+                        'education', 
+                        'education_profile', 
+                        'receipt',
+                    )
+        }),
         ('Привилегии', {'fields': ('is_admin', 'is_active')}),
     )
     add_fieldsets = (
-        (None, {
+        ('Информация об аккаунте', {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2')}
+            'fields': ('email', 'password1', 'password2',)}
         ),
+        ('Персональная информация', {
+            'fields': (
+                        'name', 
+                        'subdivision', 
+                        'education', 
+                        'education_profile', 
+                        'receipt'
+                    )
+        }),
     )
     search_fields = ('email',)
     ordering = ('email',)
@@ -66,4 +80,5 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Subdivision)
 admin.site.unregister(Group)

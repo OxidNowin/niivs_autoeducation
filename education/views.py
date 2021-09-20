@@ -3,8 +3,11 @@ from django.http import HttpResponse
 from django.views.generic.base import View
 from django.contrib import messages
 
-from .models import UserCard, FirstEducation, PeriodEducation, Subdivision
+from .models import FirstEducation, PeriodEducation
 from .forms import *
+
+from account.models import User, Subdivision
+
 
 from quiz.models import *
 
@@ -16,66 +19,6 @@ class SubdivisionName:
 
     def get_subdivisions(self):
         return Subdivision.objects.all()
-
-
-class UserListView(SubdivisionName, View):
-    """Список сотрудников"""
-
-    def get(self, request):
-        model = UserCard.objects.all()
-        form = UserCardForm()
-        context = {
-            "model": model,
-            "form": form,
-            "sub": super().get_subdivisions()}
-        return render(request, "education/usercard_list.html", context)
-
-    def post(self, request):
-        form = UserCardForm(request.POST)
-        if form.is_valid():
-            form.save()
-            employee_name = form.cleaned_data['name']
-            messages.success(request, f'Сотрудник {employee_name} успешно добавлен!')
-        else:
-            messages.error(request, 'Что-то пошло не так...')
-        return redirect('usercard_list')
-
-
-class UserDetailView(View):
-    """Карточка сотрудника"""
-
-    def get(self, request, pk, slug):
-        context = {}
-        try:
-            model = UserCard.objects.get(id=pk)
-            context.update({'model': model})
-        except:
-            messages.error(request, 'Сотрудник не найден')
-        return render(request, "education/usercard_detail.html", context)
-
-    def post(self, request, pk, slug):
-        try:
-            user_id = list(request.POST.values())[1]
-            employee_name = UserCard.objects.get(id=user_id).name 
-            UserCard.objects.get(id=user_id).delete()
-        except UserCard.DoesNotExist:
-            messages.error(request, 'Что-то пошло не так..')
-        else:
-            messages.success(request, f'Сотрудник {employee_name} удален')
-        return redirect('usercard_list')
-
-
-class FilterUserCardView(SubdivisionName, View):
-    """Фильтр по подразделениям"""
-
-    def get(self, request):
-        model = UserCard.objects.filter(subdivision__in=self.request.GET.getlist('subdivision_name'))
-        form = UserCardForm()
-        context = {
-            'model': model,
-            'form': form,
-            'sub': super().get_subdivisions()}
-        return render(request, "education/usercard_list.html", context)
 
 
 class FEducationView(SubdivisionName, View):
@@ -111,7 +54,7 @@ class FEducationView(SubdivisionName, View):
         """Формирование экселя по первичному обучению"""
         
         """Формирование словаря из бд"""
-        users_data = UserCard.objects.all()
+        users_data = User.objects.all()
         fedu_dict = list(FirstEducation.objects.values())
         fedu_arr = []
         for dictionary in fedu_dict:
@@ -313,7 +256,4 @@ class FilterPEducationView(SubdivisionName, View):
         }
         return render(request, "education/peducation.html", context)
 
-class AccountView(View):
-
-    def get(self, request):
-        return render(request, 'user/account.html')
+        
