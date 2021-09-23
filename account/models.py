@@ -44,6 +44,12 @@ class User(AbstractBaseUser):
 	    max_length=250,
     )
 
+    password = models.CharField(
+        'Пароль',
+        max_length=100,
+        blank=True
+    )
+
     subdivision = models.ForeignKey(
         'Subdivision',
         on_delete=models.SET_NULL,
@@ -65,6 +71,7 @@ class User(AbstractBaseUser):
 
     is_active = models.BooleanField('Активный пользователь', default=True)
     is_admin = models.BooleanField('Администратор', default=False)
+    is_superuser =  models.BooleanField('Супер пользователь', default=False)
 
     objects = UserManager()
 

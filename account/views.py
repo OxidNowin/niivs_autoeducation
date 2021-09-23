@@ -84,3 +84,9 @@ class FilterUserView(SubdivisionName, View):
             'form': form,
             'sub': super().get_subdivisions()}
         return render(request, "account/usercard_list.html", context)
+
+
+class LoginView(View):
+    """Страница входа"""
+    def get(self, request):
+        return render(request, 'registration/login.html')

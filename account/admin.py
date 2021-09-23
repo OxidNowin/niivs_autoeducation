@@ -15,32 +15,34 @@ class MyDateInput(forms.DateInput):
 
 
 class UserCreationForm(forms.ModelForm):
-    #password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput)
-    #password2 = forms.CharField(label='Подтверждение пароля', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Подтверждение пароля', widget=forms.PasswordInput)
     receipt = forms.DateField(
-        label='Дата приёма', 
+        label='Дата приёма',
         required=True,
-        widget=MyDateInput({'class': 'form-control'}))
+        widget=MyDateInput({'class': 'form-control'})
+    )
 
     class Meta:
         model = User
-        fields = ('email', 'name', 'subdivision', 'education', 'education_profile', 'receipt')
-    """
+        fields = ('email', 'name', 'subdivision', 'education', 'education_profile', 'receipt', 'is_superuser')
+
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Пароли не совпадают!")
         return password2
-    """
+
     def save(self, commit=True):
         user = super().save(commit=False)
-        #user.set_password(self.cleaned_data["password1"])
-        user.set_password(
-            User.objects.make_random_password(
-                length=10, 
-                allowed_chars=ascii_letters+digits)
-        )
+        if self.cleaned_data["password1"]:
+            user.set_password(self.cleaned_data["password1"])
+        else:
+            user.set_password(
+                User.objects.make_random_password(
+                    length=12)
+            )
         if commit:
             user.save()
         return user
@@ -51,17 +53,15 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('email', 'name', 'subdivision', 'education', 'education_profile', 'receipt', 'is_active',)
+        fields = '__all__'
 
-    def clean_password(self):
-        return self.initial["password"]
 
 
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ('email', 'name', 'subdivision', 'receipt', 'is_active', 'is_admin',)
-    list_filter = ('is_admin', 'is_active',)
+    list_display = ('email', 'name', 'subdivision', 'receipt', 'is_active', 'is_admin', 'is_superuser')
+    list_filter = ('is_admin', 'is_active', 'is_superuser')
     fieldsets = (
         ('Информация об аккаунте', {'fields': ('email', 'password')}),
         ('Персональная информация', {
@@ -73,13 +73,12 @@ class UserAdmin(BaseUserAdmin):
                         'receipt',
                     )
         }),
-        ('Привилегии', {'fields': ('is_admin', 'is_active')}),
+        ('Привилегии', {'fields': ('is_admin', 'is_active', 'is_superuser')}),
     )
     add_fieldsets = (
         ('Информация об аккаунте', {
             'classes': ('wide',),
-            #'fields': ('email', 'password1', 'password2',)}
-            'fields': ('email', 'password')}
+            'fields': ('email', 'password1', 'password2',)}
         ),
         ('Персональная информация', {
             'fields': (
@@ -87,9 +86,16 @@ class UserAdmin(BaseUserAdmin):
                         'subdivision', 
                         'education', 
                         'education_profile', 
-                        'receipt'
+                        'receipt',
                     )
+
         }),
+        ('Права доступа:', {
+            'fields': (
+                    'is_superuser',
+                    'is_active',
+                )
+            }),
     )
     search_fields = ('email',)
     ordering = ('name', 'subdivision',)
