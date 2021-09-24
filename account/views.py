@@ -16,9 +16,8 @@ class SubdivisionName:
 
 class UserListView(LoginRequiredMixin, SubdivisionName, View):
     """Список сотрудников"""
-    login_url = 'login_view'
-    redirect_field_name = 'user_list'
-    permission_denied_message = 'Нет аккка'
+    #login_url = 'user_list'
+    #redirect_field_name = 'login_view'
 
     def get(self, request):
         model = User.objects.all()
@@ -89,5 +88,42 @@ class FilterUserView(SubdivisionName, View):
 
 
 class LoginView(View):
-    """Страница входа"""
-    pass
+    """Логин пользователя""" 
+ 
+    def get(self, request):
+        """Предоставить страницу входа пользователя"""
+        return render(request, 'registration/login.html')
+ 
+    def post(self, request):
+        """Реализовать логику входа пользователя"""
+                 # Параметры приема
+        print(request.POST)
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(email=email, password=password)
+        if user is None:
+            return render (request, 'login.html', {'account_errmsg': 'Ошибка аккаунта или пароля'})
+            # Государственный замок
+        login(request, user)
+        if remembered != 'on':
+            # Не забыл войти в систему: состояние остается разрушенным после завершения сеанса браузера
+            request.session.set_expiry(0) # Единица измерения - секунды
+        else:
+            # Не забудьте войти в систему: срок хранения состояния составляет две недели (по умолчанию - две недели)
+            request.session.set_expiry(3600)
+
+         # Результат ответа
+         # Сначала достать следующий
+        next = request.GET.get('next')
+        if next:
+                         # Перенаправить на следующий
+            response = redirect(next)
+        else:
+                         # Перенаправить на домашнюю страницу
+            response = redirect(reverse('contents:index'))
+ 
+                 # Чтобы отображать информацию об имени пользователя в правом верхнем углу домашней страницы, нам нужно кэшировать имя пользователя в cookie
+        # response.set_cookie('key', 'value', 'expiry')
+        response.set_cookie('username', user.username, max_age=3600)
+                 # Результат ответа: перенаправление на домашнюю страницу
+        return response
