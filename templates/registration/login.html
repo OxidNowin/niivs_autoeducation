@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"> 
@@ -28,9 +28,12 @@
               <li class="enter__tab enter__tab-admin" data-path="two">Администратор</li>
             </ul>
             <div class="enter__inputs enter__inputs-user tab-content-active" data-target="one">
-              <input type="text" placeholder="Введите логин" class="enter__input enter__login-input">
-              <input type="password" placeholder="Введите пароль" class="enter__input enter__password-input">
-              <button class="enter__button common-button">Войти</button>
+              <form action="{% url 'login_view' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" placeholder="Введите логин" class="enter__input enter__login-input" name="email" autofocus required>
+                <input type="password" placeholder="Введите пароль" class="enter__input enter__password-input" name="password" required>
+                <button type="submit" class="enter__button common-button">Войти</button>
+              </form>
             </div>
             <div class="enter__inputs enter__inputs-admin" data-target="two">
               <input type="text" placeholder="Введите логин" class="enter__input enter__login-input">

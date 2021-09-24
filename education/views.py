@@ -7,18 +7,11 @@ from .models import FirstEducation, PeriodEducation
 from .forms import *
 
 from account.models import User, Subdivision
-
+from account.views import SubdivisionName
 
 from quiz.models import *
 
 import xlsxwriter
-
-
-class SubdivisionName:
-    """Вывод queryset подразделения"""
-
-    def get_subdivisions(self):
-        return Subdivision.objects.all()
 
 
 class FEducationView(SubdivisionName, View):

@@ -98,6 +98,10 @@ class User(AbstractBaseUser):
     def is_staff(self):
         return self.is_admin
 
+    @property
+    def is_super(self):
+        return self.is_superuser
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name, allow_unicode=True)
         super().save(*args, **kwargs)

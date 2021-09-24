@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
 from django.contrib import messages
-
-from account.admin import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import User, Subdivision
-from .admin import UserChangeForm
+from .forms import UserCreationForm, UserChangeForm
 
 
 class SubdivisionName:
@@ -15,8 +14,11 @@ class SubdivisionName:
         return Subdivision.objects.all()
 
 
-class UserListView(SubdivisionName, View):
+class UserListView(LoginRequiredMixin, SubdivisionName, View):
     """Список сотрудников"""
+    login_url = 'login_view'
+    redirect_field_name = 'user_list'
+    permission_denied_message = 'Нет аккка'
 
     def get(self, request):
         model = User.objects.all()
@@ -88,5 +90,4 @@ class FilterUserView(SubdivisionName, View):
 
 class LoginView(View):
     """Страница входа"""
-    def get(self, request):
-        return render(request, 'registration/login.html')
+    pass

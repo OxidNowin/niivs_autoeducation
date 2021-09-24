@@ -86,6 +86,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGIN_URL = 'login_view'
+LOGIN_REDIRECT_URL = 'user_list'
+
 STATIC_URL = '/static/'
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [STATIC_DIR]
