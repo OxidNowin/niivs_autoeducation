@@ -3,12 +3,9 @@
 {% load static %}
 {% block content %}
 
-	<section class="table">
-	  {% if messages %}
-	    {% for message in messages %}
-	      {{ message }} 
-	    {% endfor %}
-	  {% endif %}
+<div id="my_modal" class="modal">
+	<div class="modal_content">
+	<span class="close_modal_window">×</span>
 		<form method="POST" enctype="multipart/form-data" class="table__add-form">
 			{% csrf_token %}
 			{{ form.as_p }}
@@ -16,7 +13,19 @@
 				<button class="common-button table__add-button" type="submit">Добавить</button>
 			</div>
 		</form>	  
+	</div>
+  </div>
+
+	<section class="table">
+	  {% if messages %}
+	    {% for message in messages %}
+	      {{ message }} 
+	    {% endfor %}
+	  {% endif %}
 	  <div class="table__wrapper">
+		<div class="table__button-wrapper">
+			<button class="table__add-button common-button" id="btn_modal_window">Добавить</button>
+		</div>
 		<div class="table__button-wrapper table__download-wrapper">
 			<a class="common-button table__download-button" href="{% url 'get_fedu_xl' %}" download>Скачать отчет</a>
 		</div> 
@@ -63,13 +72,13 @@
 	      </span>
 	    </div>
 		<form action="{% url 'ffilter' %}" method="GET">
-      <select name="subdivision_name" required="True">
-        <option value="">--------</option>
-        {% for s in sub %}
-          <option value="{{ s.id }}">{{ s.subdivision_name }}</option>
-        {% endfor %}
-      </select>
-			<div class="table__button-wrapper">
+		<select name="subdivision_name" required="True">
+			<option value="">--------</option>
+			{% for s in sub %}
+			<option value="{{ s.id }}">{{ s.subdivision_name }}</option>
+			{% endfor %}
+		</select>
+			<div class="table__button-wrapper table__button-wrapper-margin">
 				<button class="common-button table__search-button" type="submit">Найти</button>
 			</div>
 		</form>

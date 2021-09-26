@@ -9,20 +9,26 @@
   {% endif %}
 
   {% for pm in poll_model %}
-    <p>Название теста: <a href="{% url 'poll_detail' pm.id %}">{{ pm.poll_name }}</a></p>
+    <p>Название теста: <a href="{% url 'poll_detail' pm.id %}">{{ pm.poll_name }}</a></p>>
   {% endfor %}
 
-  <form method="POST" enctype="multipart/form-data">
+<section class="poll">
+  <form method="POST" enctype="multipart/form-data" class="poll__form">
     {% csrf_token %}
-    <p><input type="text" name="poll_name" placeholder="Введите название теста"></p>
-    <p><input type="text" name="question_1" placeholder="Введите вопрос"></p>
-    <p><input type="checkbox" name="is_right_answer_1_question_1"><input type="text" name="answer_1_question_1" placeholder="Введите ответ"></p>
-    <p><input type="checkbox" name="is_right_answer_2_question_1"><input type="text" name="answer_2_question_1" placeholder="Введите ответ"></p>
-
-    <p><input type="text" name="question_2" placeholder="Введите вопрос"></p>
-    <p><input type="checkbox" name="is_right_answer_1_question_2"><input type="text" name="answer_1_question_2" placeholder="Введите ответ"></p>
-    <p><input type="checkbox" name="is_right_answer_2_question_2"><input type="text" name="answer_2_question_2" placeholder="Введите ответ"></p>
-    <p><input type="checkbox" name="is_right_answer_3_question_2"><input type="text" name="answer_3_question_2" placeholder="Введите ответ"></p>
-    <button class="" type="submit" name="poll">Добавить опрос</button>
+    <ul class="poll__list">
+      <li class="poll__item"><input class="poll__input" type="text" name="poll_name" placeholder="Введите название теста"></li>
+      <li class="poll__item"><input class="poll__input" type="text" name="question_1" placeholder="Введите вопрос"></li>
+      <li class="poll__item"><input class="poll__checkbox" type="checkbox" name="is_right_answer_1_question_1"><input class="poll__input" type="text" name="answer_1_question_1" placeholder="Введите ответ"></li>
+      <li class="poll__item"><input class="poll__checkbox" type="checkbox" name="is_right_answer_2_question_1"><input class="poll__input" type="text" name="answer_2_question_1" placeholder="Введите ответ"></li>
+  
+      <li class="poll__item"><input class="poll__input" type="text" name="question_2" placeholder="Введите вопрос"></li>
+      <li class="poll__item"><input class="poll__checkbox" type="checkbox" name="is_right_answer_1_question_2"><input class="poll__input" type="text" name="answer_1_question_2" placeholder="Введите ответ"></li>
+      <li class="poll__item"><input class="poll__checkbox" type="checkbox" name="is_right_answer_2_question_2"><input class="poll__input" type="text" name="answer_2_question_2" placeholder="Введите ответ"></li>
+      <li class="poll__item"><input class="poll__checkbox" type="checkbox" name="is_right_answer_3_question_2"><input class="poll__input" type="text" name="answer_3_question_2" placeholder="Введите ответ"></li>
+      <div class="poll__button-wrapper">
+        <button onclick="out()" class="common-button poll__button" type="submit" name="poll">Добавить</button>
+      </div>
+    </ul>
   </form>
+</section>
 {% endblock %}

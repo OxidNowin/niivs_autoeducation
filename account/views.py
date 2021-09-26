@@ -14,7 +14,7 @@ class SubdivisionName:
         return Subdivision.objects.all()
 
 
-class UserListView(LoginRequiredMixin, SubdivisionName, View):
+class UserListView(SubdivisionName, View):
     """Список сотрудников"""
     #login_url = 'user_list'
     #redirect_field_name = 'login_view'

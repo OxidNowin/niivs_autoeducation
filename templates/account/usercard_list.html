@@ -2,13 +2,10 @@
 {% block title %}Список сотрудников{% endblock %}
 {% load static %}
 {% block content %}
-  
-  <section class="table">
-    {% if messages %}
-      {% for message in messages %}
-        {{ message }} 
-      {% endfor %}
-    {% endif %}
+
+<div id="my_modal" class="modal">
+  <div class="modal_content">
+  <span class="close_modal_window">×</span>
     <form method="POST" class="table__search-form">
       {% csrf_token %}
       {{ form.as_p }}
@@ -16,7 +13,19 @@
         <button type="submit" class="table__add-button common-button">Добавить</button>
       </div>
     </form>
+  </div>
+</div>
+
+<section class="table">
+    {% if messages %}
+      {% for message in messages %}
+        {{ message }}  
+      {% endfor %}
+    {% endif %}
     <div class="table__wrapper">
+      <div class="table__button-wrapper">
+        <button class="table__add-button common-button" id="btn_modal_window">Добавить</button>
+      </div>
       <div class="table__search">
         <input type="text" class="table__search-input" placeholder="Поиск" required>
         <span class="table__search-button">
@@ -36,7 +45,7 @@
             <option value="{{ s.id }}">{{ s.subdivision_name }}</option>
           {% endfor %}
         </select>
-        <div class="table__button-wrapper">
+        <div class="table__button-wrapper table__button-wrapper-margin">
           <button type="submit" class="common-button table__search-button">Найти</button>
         </div>
       </form>
@@ -60,6 +69,6 @@
       <tr>
         {% endfor %}
     </table>
-  </section>  
+  </section>   -->
 
 {% endblock %}
